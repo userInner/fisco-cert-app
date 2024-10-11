@@ -1,0 +1,562 @@
+basePath: /api/v1
+definitions:
+  controller.ResCode:
+    enum:
+    - 1000
+    - 1001
+    - 1002
+    - 1003
+    - 1004
+    - 1005
+    - 1006
+    - 1007
+    - 1008
+    type: integer
+    x-enum-varnames:
+    - CodeSuccess
+    - CodeInvalidParam
+    - CodeUserExist
+    - CodeUserNotExist
+    - CodeInvalidPassword
+    - CodeServerBusy
+    - CodeNeedLogin
+    - CodeInvalidToken
+    - CodeInvalidUploadFile
+  controller.ResponseData:
+    properties:
+      code:
+        $ref: '#/definitions/controller.ResCode'
+      data: {}
+      msg: {}
+    type: object
+  models.BlockDetailResp:
+    properties:
+      height:
+        description: 当前块高
+        type: string
+      sealer:
+        description: 出块节点
+        type: string
+      timestamp:
+        description: 时间戳
+        type: string
+      tx_sum:
+        description: 交易总数
+        type: string
+    type: object
+  models.EvidenceDetailResp:
+    properties:
+      create_at:
+        type: string
+      created_at:
+        description: 时间
+        type: string
+      evidence:
+        type: string
+      img_url:
+        description: 图片
+        type: string
+      total:
+        description: 总数量
+        type: integer
+      tx_id:
+        description: 版权编号/交易id
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  models.EvidenceResp:
+    properties:
+      created_at:
+        description: 时间
+        type: string
+      img_url:
+        description: 图片
+        type: string
+      total:
+        description: 总数量
+        type: integer
+      tx_id:
+        description: 版权编号/交易id
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  models.ParamAuth:
+    type: object
+  models.ParamEvidence:
+    type: object
+  models.ParamEvidenceDeatil:
+    properties:
+      tx_id:
+        type: string
+    required:
+    - tx_id
+    type: object
+  models.ParamImgEvidence:
+    properties:
+      hexPrivateKey:
+        description: 私钥
+        type: string
+      img:
+        description: 原图
+        type: string
+      watermark:
+        description: 水印图片
+        type: string
+    required:
+    - hexPrivateKey
+    - img
+    - watermark
+    type: object
+  models.ParamLogin:
+    properties:
+      password:
+        description: 用户密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.ParamSignUp:
+    properties:
+      password:
+        description: 用户密码
+        type: string
+      re_password:
+        description: 用户再次输入密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - password
+    - re_password
+    - username
+    type: object
+  models.ParamWaterMark:
+    type: object
+  models.TxDetailResp:
+    properties:
+      from:
+        type: string
+      timestamp:
+        type: string
+      to:
+        type: string
+      tx_id:
+        type: string
+    type: object
+  models.TxTotalResp:
+    properties:
+      failed_tx_sum:
+        description: 失败交易总数
+        type: string
+      tx_sum:
+        description: 交易总数
+        type: string
+    type: object
+  mysql.TxSum:
+    properties:
+      date:
+        type: string
+      trans_count:
+        type: integer
+    type: object
+host: localhost:8084
+info:
+  contact:
+    email: 1239989762@qq.com
+    name: API Support
+    url: http://www.swagger.io/support
+  description: 关于fisco-cert-app社区接口文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: fisco-cert-app 社区
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - form-data/form-data
+      description: 对原图片进行盲水印提取
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamAuth'
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: url
+          schema:
+            type: string
+      summary: 对图片盲水印进行提取
+      tags:
+      - 水印相关接口
+  /blockNumber:
+    get:
+      consumes:
+      - application/json
+      description: 获取fisco-bcos最新块高
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: height
+          schema:
+            type: string
+      summary: 获取最新块高
+      tags:
+      - 区块链信息相关接口
+  /evidence:
+    get:
+      consumes:
+      - application/json
+      description: 查询上链的版权详情信息
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamEvidenceDeatil'
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            $ref: '#/definitions/models.EvidenceDetailResp'
+      summary: 查看版权详情
+      tags:
+      - 水印相关接口
+  /getLatestBlock:
+    get:
+      consumes:
+      - application/json
+      description: 获取fisco-bcos区块链获取最新十个区块
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            items:
+              $ref: '#/definitions/models.BlockDetailResp'
+            type: array
+      summary: 获取最新十个区块
+      tags:
+      - 区块链信息相关接口
+  /getLatestTx:
+    get:
+      consumes:
+      - application/json
+      description: 获取fisco-bcos区块链获取最新十笔区块
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            items:
+              $ref: '#/definitions/models.TxDetailResp'
+            type: array
+      summary: 获取最新十个十笔交易
+      tags:
+      - 区块链信息相关接口
+  /getPeers:
+    get:
+      consumes:
+      - application/json
+      description: 获取fisco-bcos区块链连接的节点ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            items:
+              type: string
+            type: array
+      summary: 最新区块链连接的节点ID
+      tags:
+      - 区块链信息相关接口
+  /getTransSums:
+    get:
+      consumes:
+      - application/json
+      description: 获取印系统的交易数量最新用户交易数量
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            items:
+              $ref: '#/definitions/mysql.TxSum'
+            type: array
+      summary: 获取通过水印系统的交易数量
+      tags:
+      - 区块链信息相关接口
+  /getTransactionTotal:
+    get:
+      consumes:
+      - application/json
+      description: 获取fisco-bcos区块链交易总数
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            $ref: '#/definitions/models.TxTotalResp'
+      summary: 最新区块链交易总数
+      tags:
+      - 区块链信息相关接口
+  /getUserCount:
+    get:
+      description: 用户数量
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            type: integer
+      summary: 用户数量
+      tags:
+      - 水印相关接口
+  /getUserInfo:
+    post:
+      consumes:
+      - application/json
+      description: 通过Header中Authorization查询用户信息
+      parameters:
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+      summary: 获取用户详情信息
+      tags:
+      - 用户相关接口
+  /img:
+    post:
+      consumes:
+      - application/json
+      description: 对原图片进行盲水印提取
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamImgEvidence'
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: url
+          schema:
+            type: string
+      summary: 图片水印提取
+      tags:
+      - 水印相关接口
+  /list:
+    get:
+      description: 查询上链的版权信息
+      parameters:
+      - description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数据量
+        example: 10
+        in: query
+        name: size
+        type: integer
+      - description: 用户名
+        example: ""
+        in: query
+        name: user_name
+        type: string
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data
+          schema:
+            items:
+              $ref: '#/definitions/models.EvidenceResp'
+            type: array
+      summary: 查询版权列表
+      tags:
+      - 水印相关接口
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登陆接口
+      parameters:
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+      summary: 用户登陆
+      tags:
+      - 用户相关接口
+  /refresh:
+    get:
+      consumes:
+      - application/json
+      description: 用户获取新的AccessToken接口
+      parameters:
+      - description: Bearer Access_Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Bearer Refresh_Token
+        in: header
+        name: RefreshToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: access_token
+          schema:
+            type: string
+      summary: 获取新AccessToken
+      tags:
+      - 用户相关接口
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册接口
+      parameters:
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      - description: 参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamSignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+      summary: 用户注册
+      tags:
+      - 用户相关接口
+  /upwatermark:
+    post:
+      consumes:
+      - form-data/form-data
+      description: 上传水印图片，为后续图片水印进行处理
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamWaterMark'
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: url
+          schema:
+            type: string
+      summary: 上传图片水印
+      tags:
+      - 水印相关接口
+  /watermark:
+    post:
+      consumes:
+      - application/json
+      description: 通过用户私钥，为原图添加盲水印
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/models.ParamEvidence'
+      - description: Bearer JWT
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: url
+          schema:
+            type: string
+      summary: 添加文字水印
+      tags:
+      - 水印相关接口
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

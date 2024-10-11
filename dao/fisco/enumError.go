@@ -1,0 +1,5 @@
+package fisco
+
+//const (
+//	Invalid
+//)

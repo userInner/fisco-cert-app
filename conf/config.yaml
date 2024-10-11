@@ -1,0 +1,48 @@
+name: "todo"
+mode: "dev"
+port: 8084
+version: "v0.0.1"
+start_time: "2024-01-25"
+machine_id: 1 # 机器ID
+local: "zh" # validate翻译器语言
+auth:
+  pwd_secret: "uer_tmd_ee" # 密码加密器
+  token_secret: "冬日暖阳" # token加密器
+  token_expire: 1 # 小时
+log:
+  level: "info"
+  filename: "web_app.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  user: "root"
+  password: "root"
+  dbname: "fisco_cert_app"
+  max_open_conns: 200
+  max_idle_conns: 50
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 100
+tencent: # 腾讯云盲水印COS秘钥配置项
+  cos_region: "" # 腾讯水印处理器
+  get_service: ""
+  secret_id: ""
+  secret_key: ""
+#fisco-bcos-config:
+#  tls_ca: "./cert/sdk/ca.crt" ## ca
+#  tls_key_file: "./cert/sdk/sdk.key", ## tls key
+#  tls_cert_file: "./cert/sdk/sdk.cert",
+#  tls_sm_en_key_file: "",
+#  tls_sm_en_cert_file: "",
+#  is_sm_crypto: false,
+#  private_key: "",
+#  group_id: "group0",
+#  host: "192.168.50.128",
+#  port: 20200,
+#  disable_ssl: false
